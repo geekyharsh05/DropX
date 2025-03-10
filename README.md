@@ -1,13 +1,57 @@
-go to client folder
-run command "npm install --force"
-run command "npm run pod-install" for ios Only
-run command "npm run android" or "npm run ios"
+# DropX
 
-Note: Emulator run on different ip might not be able to 
-establish connection you have to use real device or ios simulator
+## Getting Started
 
-Create APK using command
-cd android && ./gradlew assembleRelease
+Follow these steps to set up and run the project.
 
-check folder 
-android/app/build/output/release/app-release.apk
+### Prerequisites
+
+Ensure you have the following installed:
+- Node.js
+- npm
+- Android Studio (for Android development)
+- Xcode (for iOS development)
+
+### Installation
+
+1. Navigate to the `client` folder:
+   ```bash
+   cd client
+   ```
+2. Install dependencies
+  ```bash
+  npm install --force
+  ```
+3. For iOS only: Install CocoaPods dependencies
+  ```bash
+  npm run pod-install
+  ```
+4. Run the project
+
+   For Android:
+   ```bash
+   npm run android
+   ```
+
+   For iOS:
+   ```bash
+   npm run ios
+   ```
+
+### Note: If the emulator runs on a different IP, the connection might fail. In such cases, use a real device or the iOS simulator.
+
+### Steps to Create an APK
+
+1. Navigate to the android folder
+   ```bash
+   cd android
+   ```
+
+2. Run the Gradle build command
+   ```bash
+    ./gradlew assembleRelease
+   ```
+3. Locate the APK file
+   ```bash
+    android/app/build/outputs/release/app-release.apk
+   ```

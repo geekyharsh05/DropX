@@ -26,7 +26,7 @@ const Misc = () => {
       </View>
 
       <CustomText fontFamily="Okra-Bold" style={styles.text2}>
-        Made with ❤️ - Ritik Prasad
+        Made with ❤️ - Team DropX
       </CustomText>
       
     </View>

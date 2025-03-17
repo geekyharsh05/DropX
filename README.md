@@ -1,3 +1,7 @@
+<div align="center">
+  <img src="./src/assets/images/logo_t.png" alt="DropX logo" width="300" height="175">
+</div>
+
 # DropX - Peer-to-Peer File Transfer Application
 
 ## Overview

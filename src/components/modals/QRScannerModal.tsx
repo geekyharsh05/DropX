@@ -58,9 +58,18 @@ const QRScannerModal: FC<ModalProps> = ({visible, onClose}) => {
   }, [shimmerTranslateX]);
 
   const handleScan = (data: any) => {
-    const [connectionData, deviceName] = data.replace('tcp://', '').split('|');
-    const [host, port] = connectionData?.split(':');
-    //connectToServer
+    const [encodedConnectionData, encodedDeviceName] = data
+      .replace('tcp://', '')
+      .split('|');
+    
+    // Decode the connection data (IP and port)
+    const connectionData = decodeURIComponent(encodedConnectionData);
+    
+    // Decode the device name
+    const deviceName = decodeURIComponent(encodedDeviceName);
+    
+    const [host, port] = connectionData.split(':');
+    
     connectToServer(host, parseInt(port, 10), deviceName);
   };
 

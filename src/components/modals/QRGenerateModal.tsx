@@ -36,8 +36,8 @@ const QRGenerateModal: FC<ModalProps> = ({visible, onClose}) => {
   }));
 
   const setupServer = async () => {
-    const deviceName = await DeviceInfo.getDeviceName();
-    const ip = await getLocalIPAddress();
+    const deviceName = encodeURIComponent(await DeviceInfo.getDeviceName()); // Encode the device name
+    const ip = encodeURIComponent(await getLocalIPAddress()); // Encode the IP address
     const port = 4000;
 
     if (server) {

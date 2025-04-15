@@ -16,6 +16,23 @@ import {Camera, CodeScanner, useCameraDevice} from 'react-native-vision-camera';
 import {useTCP} from '../../service/TCPProvider';
 import {navigate} from '../../utils/NavigationUtil';
 
+// Simple decoding function - reverses the encoding process
+const decodeData = (encoded: string): string => {
+  try {
+    // Decode from base64
+    const decoded = Buffer.from(encoded, 'base64').toString();
+    // Remove salt and reverse back
+    const salt = 'DropX';
+    if (!decoded.startsWith(salt)) {
+      throw new Error('Invalid encoded data');
+    }
+    return decoded.substring(salt.length).split('').reverse().join('');
+  } catch (error) {
+    console.error('Error decoding data:', error);
+    return '';
+  }
+};
+
 interface ModalProps {
   visible: boolean;
   onClose: () => void;
@@ -62,11 +79,11 @@ const QRScannerModal: FC<ModalProps> = ({visible, onClose}) => {
       .replace('tcp://', '')
       .split('|');
     
-    // Decode the connection data (IP and port)
-    const connectionData = decodeURIComponent(encodedConnectionData);
+    // Decode the hashed connection data (IP and port)
+    const connectionData = decodeData(encodedConnectionData);
     
-    // Decode the device name
-    const deviceName = decodeURIComponent(encodedDeviceName);
+    // Decode the hashed device name
+    const deviceName = decodeData(encodedDeviceName);
     
     const [host, port] = connectionData.split(':');
     

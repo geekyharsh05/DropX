@@ -19,6 +19,15 @@ import DeviceInfo from 'react-native-device-info';
 import {getLocalIPAddress} from '../../utils/networkUtils';
 import {navigate} from '../../utils/NavigationUtil';
 
+// Simple encoding function - uses base64 with a simple transformation
+const encodeData = (data: string): string => {
+  // Apply a simple transformation (reverse the string and add a salt)
+  const salt = 'DropX';
+  const transformed = salt + data.split('').reverse().join('');
+  // Convert to base64
+  return Buffer.from(transformed).toString('base64');
+};
+
 interface ModalProps {
   visible: boolean;
   onClose: () => void;
@@ -36,18 +45,22 @@ const QRGenerateModal: FC<ModalProps> = ({visible, onClose}) => {
   }));
 
   const setupServer = async () => {
-    const deviceName = encodeURIComponent(await DeviceInfo.getDeviceName()); // Encode the device name
-    const ip = encodeURIComponent(await getLocalIPAddress()); // Encode the IP address
+    const deviceName = await DeviceInfo.getDeviceName();
+    const ip = await getLocalIPAddress();
     const port = 4000;
 
+    // Hash the values instead of using encodeURIComponent
+    const hashedDeviceName = encodeData(deviceName);
+    const hashedIpPort = encodeData(`${ip}:${port}`);
+
     if (server) {
-      setQRValue(`tcp://${ip}:${port}|${deviceName}`);
+      setQRValue(`tcp://${hashedIpPort}|${hashedDeviceName}`);
       setLoading(false);
       return;
     }
 
     startServer(port);
-    setQRValue(`tcp://${ip}:${port}|${deviceName}`);
+    setQRValue(`tcp://${hashedIpPort}|${hashedDeviceName}`);
     console.log(`Server Info: ${ip}:${port}`);
     setLoading(false);
   };

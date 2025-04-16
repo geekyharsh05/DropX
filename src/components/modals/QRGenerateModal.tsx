@@ -18,6 +18,22 @@ import {useTCP} from '../../service/TCPProvider';
 import DeviceInfo from 'react-native-device-info';
 import {getLocalIPAddress} from '../../utils/networkUtils';
 import {navigate} from '../../utils/NavigationUtil';
+import { Base64 } from 'js-base64'; // Import a compatible base64 library
+
+// Simple encoding function - uses base64 with a simple transformation
+const encodeData = (data: string): string => {
+  try {
+    // Apply a simple transformation (reverse the string and add a salt)
+    const salt = 'DropX';
+    const transformed = salt + data.split('').reverse().join('');
+    // Convert to base64 using js-base64 library
+    return Base64.encode(transformed);
+  } catch (error) {
+    console.error('Error encoding data:', error);
+    // Fallback to plain string if encoding fails
+    return data;
+  }
+};
 
 interface ModalProps {
   visible: boolean;
@@ -28,7 +44,7 @@ const QRGenerateModal: FC<ModalProps> = ({visible, onClose}) => {
   const {isConnected, startServer, server} = useTCP();
 
   const [loading, setLoading] = useState(true);
-  const [qrValue, setQRValue] = useState('Ritik');
+  const [qrValue, setQRValue] = useState('profile');
   const shimmerTranslateX = useSharedValue(-300);
 
   const shimmerStyle = useAnimatedStyle(() => ({
@@ -36,20 +52,38 @@ const QRGenerateModal: FC<ModalProps> = ({visible, onClose}) => {
   }));
 
   const setupServer = async () => {
-    const deviceName = await DeviceInfo.getDeviceName();
-    const ip = await getLocalIPAddress();
-    const port = 4000;
+    try {
+      const deviceName = await DeviceInfo.getDeviceName();
+      const ip = await getLocalIPAddress();
+      const port = 4000;
 
-    if (server) {
-      setQRValue(`tcp://${ip}:${port}|${deviceName}`);
+      console.log('Raw data to encode:', { deviceName, ip, port });
+
+      // Hash the values instead of using encodeURIComponent
+      const hashedDeviceName = encodeData(deviceName);
+      const hashedIpPort = encodeData(`${ip}:${port}`);
+      
+      console.log('Encoded data:', { hashedDeviceName, hashedIpPort });
+
+      const qrData = `tcp://${hashedIpPort}|${hashedDeviceName}`;
+      console.log('Final QR data:', qrData);
+      
+      if (server) {
+        setQRValue(qrData);
+        setLoading(false);
+        return;
+      }
+
+      startServer(port);
+      setQRValue(qrData);
+      console.log(`Server Info: ${ip}:${port}`);
       setLoading(false);
-      return;
+    } catch (error) {
+      console.error('Error setting up server:', error);
+      // Set a fallback QR value
+      setQRValue(`tcp://localhost:4000|fallback`);
+      setLoading(false);
     }
-
-    startServer(port);
-    setQRValue(`tcp://${ip}:${port}|${deviceName}`);
-    console.log(`Server Info: ${ip}:${port}`);
-    setLoading(false);
   };
 
   useEffect(() => {
@@ -101,7 +135,7 @@ const QRGenerateModal: FC<ModalProps> = ({visible, onClose}) => {
               logoBackgroundColor="#fff"
               logoMargin={2}
               logoBorderRadius={10}
-              logo={require('../../assets/images/profile2.jpg')}
+              logo={require('../../assets/images/profile.jpg')}
               linearGradient={multiColor}
               enableLinearGradient
             />

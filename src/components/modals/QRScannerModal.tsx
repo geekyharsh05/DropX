@@ -15,6 +15,25 @@ import Icon from '../global/Icon';
 import {Camera, CodeScanner, useCameraDevice} from 'react-native-vision-camera';
 import {useTCP} from '../../service/TCPProvider';
 import {navigate} from '../../utils/NavigationUtil';
+import {Base64} from 'js-base64'; // Import a compatible base64 library
+
+// Simple decoding function - reverses the encoding process
+const decodeData = (encoded: string): string => {
+  try {
+    // Decode from base64 using js-base64 library
+    const decoded = Base64.decode(encoded);
+    // Remove salt and reverse back
+    const salt = 'DropX';
+    if (!decoded.startsWith(salt)) {
+      console.warn('Invalid encoded data format:', encoded);
+      return encoded; // Return original as fallback
+    }
+    return decoded.substring(salt.length).split('').reverse().join('');
+  } catch (error) {
+    console.error('Error decoding data:', error);
+    return encoded; // Return original as fallback
+  }
+};
 
 interface ModalProps {
   visible: boolean;
@@ -58,10 +77,33 @@ const QRScannerModal: FC<ModalProps> = ({visible, onClose}) => {
   }, [shimmerTranslateX]);
 
   const handleScan = (data: any) => {
-    const [connectionData, deviceName] = data.replace('tcp://', '').split('|');
-    const [host, port] = connectionData?.split(':');
-    //connectToServer
-    connectToServer(host, parseInt(port, 10), deviceName);
+    try {
+      console.log('Scanned raw data:', data);
+
+      const [encodedConnectionData, encodedDeviceName] = data
+        .replace('tcp://', '')
+        .split('|');
+
+      console.log('Parsed encoded data:', {
+        encodedConnectionData,
+        encodedDeviceName,
+      });
+
+      // Decode the hashed connection data (IP and port)
+      const connectionData = decodeData(encodedConnectionData);
+
+      // Decode the hashed device name
+      const deviceName = decodeData(encodedDeviceName);
+
+      console.log('Decoded data:', {connectionData, deviceName});
+
+      const [host, port] = connectionData.split(':');
+
+      console.log('Connection details:', {host, port, deviceName});
+      connectToServer(host, parseInt(port, 10), deviceName);
+    } catch (error) {
+      console.error('Error handling scan:', error);
+    }
   };
 
   const codeScanner = useMemo<CodeScanner>(

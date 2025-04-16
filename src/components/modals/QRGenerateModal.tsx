@@ -44,7 +44,7 @@ const QRGenerateModal: FC<ModalProps> = ({visible, onClose}) => {
   const {isConnected, startServer, server} = useTCP();
 
   const [loading, setLoading] = useState(true);
-  const [qrValue, setQRValue] = useState('Ritik');
+  const [qrValue, setQRValue] = useState('profile');
   const shimmerTranslateX = useSharedValue(-300);
 
   const shimmerStyle = useAnimatedStyle(() => ({
@@ -135,7 +135,7 @@ const QRGenerateModal: FC<ModalProps> = ({visible, onClose}) => {
               logoBackgroundColor="#fff"
               logoMargin={2}
               logoBorderRadius={10}
-              logo={require('../../assets/images/profile2.jpg')}
+              logo={require('../../assets/images/profile.jpg')}
               linearGradient={multiColor}
               enableLinearGradient
             />

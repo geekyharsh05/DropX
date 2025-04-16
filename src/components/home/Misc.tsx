@@ -25,9 +25,7 @@ const Misc = () => {
         />
       </View>
 
-      <CustomText fontFamily="Okra-Bold" style={styles.text2}>
-        Made with ❤️ - Ritik Prasad
-      </CustomText>
+  
       
     </View>
   );

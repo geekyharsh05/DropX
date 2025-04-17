@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="./src/assets/images/logo_t.png" alt="DropX logo" width="400" height="175">
+  <img src="./src/assets/images/logo_t.png" alt="DropX logo" width="500" height="175">
 </div>
 
 # DropX - Peer-to-Peer File Transfer Application

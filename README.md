@@ -40,9 +40,9 @@ Ensure you have the following installed:
 
 ### Installation
 
-1. Navigate to the `client` folder:
+1. Navigate to the `DropX` folder:
 ```bash
-cd client
+cd DropX
 ```
 
 2. Install dependencies:
